@@ -1,0 +1,61 @@
+h1 {
+  font-size: 24px;
+  font-variant: small-caps;
+  margin: 10px 0 4px 0;
+}
+
+h4 {
+  font-size: 16px;
+  margin: 10px 0 4px 0;
+}
+
+.face {
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.row {
+  overflow: hidden;
+}
+
+.sticker {
+  float: left;
+  width: 26px;
+  height: 20px;
+  margin: 1px;
+  border: 1px solid #666;
+  padding: 4px;
+}
+
+.Y {
+  background-color: yellow;
+}
+
+.W {
+  background-color: white;
+}
+
+.B {
+  background-color: blue;
+  color: white;
+}
+
+.G {
+  background-color: green;
+  color: white;
+}
+
+.R {
+  background-color: red;
+  color: white;
+}
+
+.O {
+  background-color: orange;
+}
+
+.debug {
+  font-size: 12px;
+  font-style: italic;
+  background-color: #eee;
+}

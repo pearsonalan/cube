@@ -1,0 +1,189 @@
+html {
+  background: black;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+}
+
+#output {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 8px;
+  background-color: white;
+  width: 240px;
+  height: 700px;
+  overflow-y: scroll;
+  font-size: 13px;
+}
+
+#output h4 {
+  font-size: 16px;
+  margin: 10px 0 4px 0;
+}
+
+#output .face {
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+#output .row {
+  overflow: hidden;
+}
+
+#output .sticker {
+  float: left;
+  width: 32px;
+  height: 20px;
+  margin: 1px;
+  border: 1px solid #666;
+  padding: 4px;
+}
+
+#output .sticker.Y {
+  background-color: yellow;
+}
+
+#output .sticker.W {
+  background-color: white;
+}
+
+#output .sticker.B {
+  background-color: blue;
+  color: white;
+}
+
+#output .sticker.G {
+  background-color: green;
+  color: white;
+}
+
+#output .sticker.R {
+  background-color: red;
+  color: white;
+}
+
+#output .sticker.O {
+  background-color: orange;
+}
+
+.debug {
+  font-size: 12px;
+  font-style: italic;
+  color: #888;
+}
+
+
+
+.container {
+  background: -webkit-gradient(radial, center center, 0, center center, 300, from(#99c), to(black));
+  width: 600px;
+  height: 600px;
+  margin: 12px auto;
+  -webkit-transition: opacity 1.5s;
+  opacity: 0;
+}
+
+.scene {
+  position: absolute;
+  -webkit-perspective: 1000px;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+.camera {
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: translateX(1400px) translateY(1400px) translateZ(-4000px);
+  -webkit-transition: -webkit-transform 0.7s;
+}
+
+.rotator {
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+/*  -webkit-transform: rotateY(270deg) rotateX(10deg) rotateZ(0deg); */
+}
+
+.cube {
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+}
+
+.cube .subcube {
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+}
+
+.cube .layer {
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform 0.8s;
+}
+
+.cube .face {
+  -webkit-transform-style: preserve-3d;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: black;
+}
+
+.cube .face.up-face {
+  -webkit-transform: translateZ(50px) translateY(-50px) rotateX(90deg);
+}
+
+.cube .face.down-face {
+  -webkit-transform: translateZ(50px) translateY(50px) rotateX(-90deg); 
+}
+
+.cube .face.right-face {
+  -webkit-transform: translateZ(50px) translateX(50px) rotateY(90deg);
+}
+
+.cube .face.left-face {
+  -webkit-transform: translateZ(50px) translateX(-50px) rotateY(90deg) rotateX(180deg);
+}
+
+.cube .face.back-face {
+  -webkit-transform: translateZ(50px) translateZ(-50px) rotateX(180deg);
+}
+
+.cube .face.front-face {
+  -webkit-transform: translateZ(50px) translateZ(50px);
+}
+
+.cube .face .sticker {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 82px;
+  height: 82px;
+  border-radius: 8px;
+  font-size: 26px;
+  line-height: 26px;
+  padding: 4px;
+}
+
+.cube .face .sticker.red {
+  background-color: #f00;
+  color: white;
+}
+
+.cube .face .sticker.green {
+  background-color: #080;
+}
+
+.cube .face .sticker.blue {
+  background-color: blue;
+  color: white;
+}
+
+.cube .face .sticker.yellow {
+  background-color: yellow;
+}
+
+.cube .face .sticker.orange {
+  background-color: #f80;
+}
+
+.cube .face .sticker.white {
+  background-color: white;
+}
