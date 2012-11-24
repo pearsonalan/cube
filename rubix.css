@@ -89,38 +89,26 @@ html {
   cursor: default;
 }
 
-.camera {
+.camera,
+.rotator, 
+.cube,
+.cube .subcube,
+.cube .layer,
+.cube .face {
   position: absolute;
   -webkit-transform-style: preserve-3d;
+}
+
+.camera {
   -webkit-transform: translateX(1400px) translateY(1400px) translateZ(-4000px);
   -webkit-transition: -webkit-transform 0.7s;
 }
 
-.rotator {
-  position: absolute;
-  -webkit-transform-style: preserve-3d;
-/*  -webkit-transform: rotateY(270deg) rotateX(10deg) rotateZ(0deg); */
-}
-
-.cube {
-  position: absolute;
-  -webkit-transform-style: preserve-3d;
-}
-
-.cube .subcube {
-  position: absolute;
-  -webkit-transform-style: preserve-3d;
-}
-
 .cube .layer {
-  position: absolute;
-  -webkit-transform-style: preserve-3d;
   -webkit-transition: -webkit-transform 0.8s;
 }
 
 .cube .face {
-  -webkit-transform-style: preserve-3d;
-  position: absolute;
   width: 100px;
   height: 100px;
   background-color: black;
