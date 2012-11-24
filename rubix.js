@@ -455,56 +455,73 @@ function makeCubeView(cube) {
  
   var div = B.DIV({class: "cube"}, layers);
 
-  // var n = 0;
-  // window.setInterval(function() {
-  //   layers[2].style.webkitTransform = "rotateX(" + (n*5) + "deg)";
-  //   n = n + 1;
-  // },100);
+  (function () {
+    var rot = 0;
+    document.body.addEventListener('keypress', function (evt) {
+      var key = evt.keyCode || evt.which;
+      var keychar = String.fromCharCode(key);
+    
+      if (keychar == 'g') {
+        rot = rot + 90;
+        layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
+      }
 
-  var rot = 0;
-
-  // window.setTimeout(function() {
-  //   layers[2].style.webkitTransform = "rotateX(90deg)";
-  // },1000);
-
-  document.body.addEventListener('keypress', function (evt) {
-    var key = evt.keyCode || evt.which;
-    var keychar = String.fromCharCode(key);
-  
-    if (keychar == 'g') {
-      rot = rot + 90;
-      layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
-    }
-
-    if (keychar == 'G') {
-      rot = rot - 90;
-      layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
-    }
-
-  },false);
+      if (keychar == 'G') {
+        rot = rot - 90;
+        layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
+      }
+    },false);
+  }());
 
   return div;
 }
 
 function makeScene() {
-  var cubeView = makeCubeView(Cube);
-  var rotator = Builder.DIV({class: "rotator"},[cubeView]);
-  var camera = Builder.DIV({class: "camera"},[rotator]);
+
+  var rotator = (function () {
+    var xrot = 0, yrot = 0, rotating = false;
+
+    var rotatorDiv = Builder.DIV({class: "rotator"},[]);
+
+    document.body.addEventListener('mousedown', function (evt) {
+      console.log("mousedown");
+      rotating = true;
+    },false);
+
+    document.body.addEventListener('mouseup', function (evt) {
+      console.log("mouseup");
+      rotating = false;
+    },false);
+
+    document.body.addEventListener('mousemove', function (evt) {
+      console.log("mousemove: ", evt);
+      if (rotating && (evt.webkitMovementY !== 0 || evt.webkitMovementX !== 0)) {
+        // mouse movement in the x-axis causes cube rotation around the y-axis and vice-versa
+        xrot = xrot - evt.webkitMovementY/2;
+        yrot = yrot + evt.webkitMovementX/2;
+        rotatorDiv.style.webkitTransform = "rotateY(" + yrot + "deg) rotateX(" + xrot + "deg)";
+      }
+    },false);
+
+    return {
+      setCubeView: function (cubeView) {
+        removeChildren(rotatorDiv);
+        rotatorDiv.appendChild(cubeView);
+      },
+      getRotatorDiv: function () {
+        return rotatorDiv;
+      }
+    };
+  }());
+
+  rotator.setCubeView(makeCubeView(Cube));
+
+  var camera = Builder.DIV({class: "camera"},[rotator.getRotatorDiv()]);
   var scene = Builder.DIV({class: "scene"},[camera]);
   var container = Builder.DIV({class: "container"},[scene]);
 
-  // var n = 0;
-  // window.setInterval(function() {
-  //   cubeView.style.webkitTransform = "rotateX(" + (n*5) + "deg) rotateY(40deg)";
-  //   n = n + 1;
-  // },100);
-
   document.body.appendChild(container);
 
-  document.body.addEventListener('mousemove', function (evt) {
-    // console.log("mousemove: ", evt);
-    rotator.style.webkitTransform = "rotateY(" + (evt.x/2) + "deg) rotateX(" + (-evt.y/2) + "deg)";
-  },false);
 
   var moves = {
     'u' : "U",
@@ -530,14 +547,12 @@ function makeScene() {
       Cube.move(move);
       Cube.printCube();
       Validator.validate(Cube);
-      removeChildren(rotator);
-      cubeView = makeCubeView(Cube);
-      rotator.appendChild(cubeView);
+      rotator.setCubeView(makeCubeView(Cube));
     }
   },false);
 
 
-  return [container, camera, scene, cubeView];
+  return [container, camera, scene];
 }
 
 window.addEventListener("DOMContentLoaded", function() {
