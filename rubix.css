@@ -162,6 +162,29 @@ html {
   padding: 4px;
 }
 
+.cube .face .sticker .color-label {
+  font-size: 20px;
+  font-style: italic;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.cube .face .sticker .position-label {
+  font-size: 20px;
+  font-style: italic;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.cube .face .sticker .model-label {
+  line-height: 82px;
+  text-align: center;
+  font-size: 42px;
+  font-weight: bold;
+}
+
 .cube .face .sticker.red {
   background-color: #f00;
   color: white;

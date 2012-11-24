@@ -101,20 +101,6 @@ function debug(str) {
   output('debug',str);
 }
 
-const YELLOW = 'Y';
-const BLUE = 'B';
-const GREEN = 'G';
-const RED = 'R';
-const ORANGE = 'O';
-const WHITE = 'W';
-
-const UP = 'U';
-const DOWN = 'D';
-const LEFT = 'L';
-const RIGHT = 'R';
-const FRONT = 'F';
-const BACK = 'B';
-
 var Cube = (function() {
   var cube;
 
@@ -128,6 +114,10 @@ var Cube = (function() {
       return [y,2-x];
     }
 
+    function index(x,y) {
+      return x*3+y;
+    }
+
     var proto = {
       init: function(arg) {
         var x, y;
@@ -139,8 +129,8 @@ var Cube = (function() {
         if (typeof arg === "string") {
           for (x = 0; x < 3; x++) {
             for (y = 0; y < 3; y++) {
-              this.colors[x*3+y] = arg;
-              this.labels[x*3+y] = arg + x + y ;
+              this.colors[index(x,y)] = arg;
+              this.labels[index(x,y)] = arg + index(x,y) ;
             }
           }
         } else {
@@ -176,8 +166,8 @@ var Cube = (function() {
             var indices = transform(x,y),
                 nx = indices[0],
                 ny = indices[1];
-            ncolors[nx*3+ny] = this.colors[x*3+y];
-            nlabels[nx*3+ny] = this.labels[x*3+y];
+            ncolors[nx*3+ny] = this.colors[index(x,y)];
+            nlabels[nx*3+ny] = this.labels[index(x,y)];
           }
         }
 
@@ -186,11 +176,11 @@ var Cube = (function() {
       },
 
       colorAt: function(x,y) {
-        return this.colors[x*3+y];
+        return this.colors[index(x,y)];
       },
 
       labelAt: function(x,y) {
-        return this.labels[x*3+y];
+        return this.labels[index(x,y)];
       }
 
     };
@@ -265,9 +255,9 @@ var Cube = (function() {
     },
     F: {
       U: [2,5,8],
-      R: [2,1,0],
-      D: [0,3,6],
-      L: [2,1,0]
+      R: [0,1,2],
+      D: [6,3,0],
+      L: [0,1,2]
     },
     B: {
       U: [0,3,6],
@@ -335,6 +325,12 @@ var Cube = (function() {
 
   return {
     getFace: getFace,
+    colorAt: function(orientation,x,y) {
+      return getFace(orientation).colorAt(x,y);
+    },
+    labelAt: function(orientation,x,y) {
+      return getFace(orientation).labelAt(x,y);
+    },
     printCube: function() {
       faces.forEach(function (face) {
         output('h4',faceNames[face]);
@@ -348,6 +344,119 @@ var Cube = (function() {
 }());
 
 
+var Validator = (function() {
+  var corners = [
+    "U00 L22 B02",
+    "U20 B22 R20",
+    "U02 F00 L02",
+    "U22 R00 F20",
+    "D00 L00 F02",
+    "D20 F22 R02",
+    "D02 B00 L20",
+    "D22 R22 B20"
+  ];
+
+  var validCornerColors = {
+    "Y0 B8 O2": true,
+    "B8 O2 Y0": true,
+    "O2 Y0 B8": true,
+    "Y6 O8 G6": true,
+    "O8 G6 Y6": true,
+    "G6 Y6 O8": true,
+    "Y2 R0 B2": true,
+    "R0 B2 Y2": true,
+    "B2 Y2 R0": true,
+    "Y8 G0 R6": true,
+    "G0 R6 Y8": true,
+    "R6 Y8 G0": true,
+    "W0 B0 R2": true,
+    "B0 R2 W0": true,
+    "R2 W0 B0": true,
+    "W6 R8 G2": true,
+    "R8 G2 W6": true,
+    "G2 W6 R8": true,
+    "W2 O0 B6": true,
+    "O0 B6 W2": true,
+    "B6 W2 O0": true,
+    "W8 G8 O6": true,
+    "G8 O6 W8": true,
+    "O6 W8 G8": true
+  };
+
+  var sides = [
+    "F01 L01",
+    "F10 U12",
+    "F21 R01",
+    "F12 D10",
+    "B01 L21",
+    "B10 D12",
+    "B21 R21",
+    "B12 U10",
+    "L10 D01",
+    "D21 R12",
+    "R10 U21",
+    "U01 L12"
+  ];
+
+  var validSideColors = {
+    "R1 B1": true,
+    "B1 R1": true,
+    "R3 Y5": true,
+    "Y5 R3": true,
+    "R7 G1": true,
+    "G1 R7": true,
+    "R5 W3": true,
+    "W3 R5": true,
+    "O1 B7": true,
+    "B7 O1": true,
+    "O3 W5": true,
+    "W5 O3": true,
+    "O7 G7": true,
+    "G7 O7": true,
+    "O5 Y3": true,
+    "Y3 O5": true,
+    "B3 W1": true,
+    "W1 B3": true,
+    "W7 G5": true,
+    "G5 W7": true,
+    "G3 Y7": true,
+    "Y7 G3": true,
+    "Y1 B5": true,
+    "B5 Y1": true,
+  };
+
+  function getSubCubeLabels(cube,subcube) {
+    var subCubeFaces = subcube.split(' ');
+    var labels = subCubeFaces.map(function (cell) {
+      return cube.labelAt(cell[0],parseInt(cell[1]),parseInt(cell[2]));
+    });
+    return labels.join(' ');
+  }
+
+  function validateSubCube(cube,validValues,subcube) {
+    console.log("Validating subcube at %s", subcube);
+    var labels = getSubCubeLabels(cube,subcube);
+    console.log("  labels at %s = %s", subcube, labels);
+    if (validValues[labels] === true) {
+      console.log("    valid");
+      return true;
+    } else {
+      console.log("    INVALID!");
+      alert("Discovered invalid piece: colors " + labels + " at " + subcube);
+      return false;
+    }
+  }
+
+  function validateModel(cube) {
+    var allCornersValid = corners.every(validateSubCube.curry(cube,validCornerColors));
+    var allSidesValid = sides.every(validateSubCube.curry(cube,validSideColors));
+    return allCornersValid && allSidesValid;
+  }
+
+  return {
+    validate: validateModel
+  };
+}());
 
 
 function makeCubeView(cube) {
@@ -408,6 +517,9 @@ function makeCubeView(cube) {
   }
 
   function makeSubCubeFromPosition(x,y,z) {
+    function makeLabel(dir,x,y) {
+      return [dir,"(",x,",",y,")"].join(''); 
+    }
     var colors = [
       (y === 0 ? modelColor('U',x,z) : undefined),
       (y === 2 ? modelColor('D',x,2-z) : undefined),
@@ -417,12 +529,12 @@ function makeCubeView(cube) {
       (z === 2 ? modelColor('F',x,y) : undefined)
     ];
     var labels = [
-      (y === 0 ? ('U' + x + z) : undefined),
-      (y === 2 ? ('D' + x + (2-z)) : undefined),
-      (x === 2 ? ('R' + (2-z) + y) : undefined),
-      (x === 0 ? ('L' + (2-z) + (2-y)) : undefined),
-      (z === 0 ? ('B' + x + (2-y)) : undefined),
-      (z === 2 ? ('F' + x + y) : undefined)
+      (y === 0 ? makeLabel('Up',x,z) : undefined),
+      (y === 2 ? makeLabel('Down',x,(2-z)) : undefined),
+      (x === 2 ? makeLabel('Right',(2-z),y) : undefined),
+      (x === 0 ? makeLabel('Left',(2-z),(2-y)) : undefined),
+      (z === 0 ? makeLabel('Back',x,(2-y)) : undefined),
+      (z === 2 ? makeLabel('Front',x,y) : undefined)
     ];
     var modelLabels = [
       (y === 0 ? modelLabel('U',x,z) : undefined),
@@ -531,6 +643,7 @@ function makeScene() {
       console.log("Performing move: " + move);
       Cube.move(move);
       Cube.printCube();
+      Validator.validate(Cube);
       removeChildren(rotator);
       cubeView = makeCubeView(Cube);
       rotator.appendChild(cubeView);
@@ -542,6 +655,7 @@ function makeScene() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
+  Validator.validate(Cube);
   var elements = makeScene();
   window.setTimeout(function () {
     elements[0].style.opacity = "1";
