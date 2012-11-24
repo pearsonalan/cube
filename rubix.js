@@ -89,7 +89,7 @@ var Builder = (function () {
   return initialize();
 })();
 
-var showLabels = false;
+var showLabels = true;
 
 function output(c,str) {
   var div = Builder.DIV({className:c},str),
