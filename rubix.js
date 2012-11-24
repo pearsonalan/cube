@@ -89,6 +89,7 @@ var Builder = (function () {
   return initialize();
 })();
 
+var showLabels = false;
 
 function output(c,str) {
   var div = Builder.DIV({className:c},str),
@@ -352,11 +353,11 @@ function makeCubeView(cube) {
       return undefined;
     }
 
-    return B.DIV({class: "sticker " + color}, [
+    return B.DIV({class: "sticker " + color}, (showLabels ? [
       B.DIV({class: "color-label"}, color),
       B.DIV({class: "position-label"}, label),
       B.DIV({class: "model-label"}, modelLabel)
-    ]);
+    ] : []));
   }
 
   function makeFace(color, directionStyle, label, modelLabel) {
