@@ -456,19 +456,29 @@ function makeCubeView(cube) {
   var div = B.DIV({class: "cube"}, layers);
 
   (function () {
-    var rot = 0;
+    var l2rot = 0, l0rot = 0;
     document.body.addEventListener('keypress', function (evt) {
       var key = evt.keyCode || evt.which;
       var keychar = String.fromCharCode(key);
-    
+
       if (keychar == 'g') {
-        rot = rot + 90;
-        layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
+        l0rot = l0rot - 90;
+        layers[0].style.webkitTransform = "rotateX(" + l0rot + "deg)";
       }
 
       if (keychar == 'G') {
-        rot = rot - 90;
-        layers[2].style.webkitTransform = "rotateX(" + rot + "deg)";
+        l0rot = l0rot + 90;
+        layers[0].style.webkitTransform = "rotateX(" + l0rot + "deg)";
+      }
+    
+      if (keychar == 'h') {
+        l2rot = l2rot + 90;
+        layers[2].style.webkitTransform = "rotateX(" + l2rot + "deg)";
+      }
+
+      if (keychar == 'H') {
+        l2rot = l2rot - 90;
+        layers[2].style.webkitTransform = "rotateX(" + l2rot + "deg)";
       }
     },false);
   }());
