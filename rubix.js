@@ -345,7 +345,7 @@ var Cube = (function() {
 }());
 
 
-function makeCubeView(cube) {
+function makeCubeView(cube,rotationAxis) {
   var B = Builder;
 
   function makeSticker(color, label, modelLabel) {
@@ -433,57 +433,97 @@ function makeCubeView(cube) {
     return makeSubCube(colors,x*100-150,y*100-150,z*100-150,labels,modelLabels);
   }
 
-  function makeLayer(n) {
-    // return B.DIV({class: "layer"},[
-    //   makeSubCubeFromPosition(0,0,n), makeSubCubeFromPosition(1,0,n), makeSubCubeFromPosition(2,0,n),
-    //   makeSubCubeFromPosition(0,1,n), makeSubCubeFromPosition(1,1,n), makeSubCubeFromPosition(2,1,n),
-    //   makeSubCubeFromPosition(0,2,n), makeSubCubeFromPosition(1,2,n), makeSubCubeFromPosition(2,2,n)
-    // ]);
+  function makeLayer(n,clockwiseRotation) {
+    var layerDiv, 
+        rot = 0, 
+        transitionEndCallback = undefined;
 
-    return B.DIV({class: "layer"},[
-      makeSubCubeFromPosition(n,0,0), makeSubCubeFromPosition(n,0,1), makeSubCubeFromPosition(n,0,2),
-      makeSubCubeFromPosition(n,1,0), makeSubCubeFromPosition(n,1,1), makeSubCubeFromPosition(n,1,2),
-      makeSubCubeFromPosition(n,2,0), makeSubCubeFromPosition(n,2,1), makeSubCubeFromPosition(n,2,2)
-    ]);
+    if (rotationAxis === 'Z') {
+      layerDiv = B.DIV({class: "layer"},[
+        makeSubCubeFromPosition(0,0,n), makeSubCubeFromPosition(1,0,n), makeSubCubeFromPosition(2,0,n),
+        makeSubCubeFromPosition(0,1,n), makeSubCubeFromPosition(1,1,n), makeSubCubeFromPosition(2,1,n),
+        makeSubCubeFromPosition(0,2,n), makeSubCubeFromPosition(1,2,n), makeSubCubeFromPosition(2,2,n)
+      ]);
+    }
+
+    if (rotationAxis === 'X') {
+      layerDiv = B.DIV({class: "layer"},[
+        makeSubCubeFromPosition(n,0,0), makeSubCubeFromPosition(n,0,1), makeSubCubeFromPosition(n,0,2),
+        makeSubCubeFromPosition(n,1,0), makeSubCubeFromPosition(n,1,1), makeSubCubeFromPosition(n,1,2),
+        makeSubCubeFromPosition(n,2,0), makeSubCubeFromPosition(n,2,1), makeSubCubeFromPosition(n,2,2)
+      ]);
+    }
+
+    if (rotationAxis === 'Y') {
+      layerDiv = B.DIV({class: "layer"},[
+        makeSubCubeFromPosition(0,n,0), makeSubCubeFromPosition(0,n,1), makeSubCubeFromPosition(0,n,2),
+        makeSubCubeFromPosition(1,n,0), makeSubCubeFromPosition(1,n,1), makeSubCubeFromPosition(1,n,2),
+        makeSubCubeFromPosition(2,n,0), makeSubCubeFromPosition(2,n,1), makeSubCubeFromPosition(2,n,2)
+      ]);
+    }
+
+    layerDiv.addEventListener('webkitTransitionEnd', function (evt) {
+      console.log("transition ended");
+      if (transitionEndCallback !== undefined) {
+        transitionEndCallback();
+        transitionEndCallback = undefined;
+      }
+    }, false);
+
+    function setTransform() {
+      layerDiv.style.webkitTransform = "rotate" + rotationAxis + "(" + rot + "deg)";
+    }
+    return {
+      getLayerDiv: function() {
+        return layerDiv;
+      },
+      getRotationAxis: function() {
+        return rotationAxis;
+      },
+      setTransitionEndCallback: function(fn) {
+        transitionEndCallback = fn;
+      },
+      rotateClockwise: function() {
+        rot = rot + clockwiseRotation;
+        setTransform();
+      },
+      rotateCounterClockwise: function() {
+        rot = rot - clockwiseRotation;
+        setTransform();
+      }
+    };
   }
 
   var layers = [
-    makeLayer(0),
-    makeLayer(1),
-    makeLayer(2)
+    makeLayer(0,-90),
+    makeLayer(1,  0),
+    makeLayer(2, 90)
   ];
  
-  var div = B.DIV({class: "cube"}, layers);
+  document.body.addEventListener('keypress', function (evt) {
+    var key = evt.keyCode || evt.which;
+    var keychar = String.fromCharCode(key);
 
-  (function () {
-    var l2rot = 0, l0rot = 0;
-    document.body.addEventListener('keypress', function (evt) {
-      var key = evt.keyCode || evt.which;
-      var keychar = String.fromCharCode(key);
+    if (keychar == 'g') {
+      layers[0].rotateClockwise();
+    }
 
-      if (keychar == 'g') {
-        l0rot = l0rot - 90;
-        layers[0].style.webkitTransform = "rotateX(" + l0rot + "deg)";
-      }
+    if (keychar == 'G') {
+      layers[0].rotateCounterClockwise();
+    }
+  
+    if (keychar == 'h') {
+      layers[2].rotateClockwise();
+    }
 
-      if (keychar == 'G') {
-        l0rot = l0rot + 90;
-        layers[0].style.webkitTransform = "rotateX(" + l0rot + "deg)";
-      }
-    
-      if (keychar == 'h') {
-        l2rot = l2rot + 90;
-        layers[2].style.webkitTransform = "rotateX(" + l2rot + "deg)";
-      }
+    if (keychar == 'H') {
+      layers[2].rotateCounterClockwise();
+    }
+  },false);
 
-      if (keychar == 'H') {
-        l2rot = l2rot - 90;
-        layers[2].style.webkitTransform = "rotateX(" + l2rot + "deg)";
-      }
-    },false);
-  }());
+  var cubeDiv = B.DIV({class: "cube"}, layers.map(function (l) { return l.getLayerDiv();}));
 
-  return div;
+  return cubeDiv;
 }
 
 function makeScene() {
@@ -494,17 +534,17 @@ function makeScene() {
     var rotatorDiv = Builder.DIV({class: "rotator"},[]);
 
     document.body.addEventListener('mousedown', function (evt) {
-      console.log("mousedown");
+      // console.log("mousedown");
       rotating = true;
     },false);
 
     document.body.addEventListener('mouseup', function (evt) {
-      console.log("mouseup");
+      // console.log("mouseup");
       rotating = false;
     },false);
 
     document.body.addEventListener('mousemove', function (evt) {
-      console.log("mousemove: ", evt);
+      // console.log("mousemove: ", evt);
       if (rotating && (evt.webkitMovementY !== 0 || evt.webkitMovementX !== 0)) {
         // mouse movement in the x-axis causes cube rotation around the y-axis and vice-versa
         xrot = xrot - evt.webkitMovementY/2;
@@ -524,7 +564,7 @@ function makeScene() {
     };
   }());
 
-  rotator.setCubeView(makeCubeView(Cube));
+  rotator.setCubeView(makeCubeView(Cube,'X'));
 
   var camera = Builder.DIV({class: "camera"},[rotator.getRotatorDiv()]);
   var scene = Builder.DIV({class: "scene"},[camera]);
@@ -557,8 +597,21 @@ function makeScene() {
       Cube.move(move);
       Cube.printCube();
       Validator.validate(Cube);
-      rotator.setCubeView(makeCubeView(Cube));
+      rotator.setCubeView(makeCubeView(Cube,'X'));
     }
+
+    if (keychar == 'x') {
+      rotator.setCubeView(makeCubeView(Cube,'X'));
+    }
+
+    if (keychar == 'y') {
+      rotator.setCubeView(makeCubeView(Cube,'Y'));
+    }
+
+    if (keychar == 'z') {
+      rotator.setCubeView(makeCubeView(Cube,'Z'));
+    }
+
   },false);
 
 
