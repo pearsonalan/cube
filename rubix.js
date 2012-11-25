@@ -89,7 +89,7 @@ var Builder = (function () {
   return initialize();
 })();
 
-var showLabels = true;
+var showLabels = window.location.hash.indexOf("labels") != -1;
 
 function output(c,str) {
   var div = Builder.DIV({className:c},str),
