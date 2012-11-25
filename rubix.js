@@ -348,6 +348,8 @@ var Cube = (function() {
 function makeCubeView(cube,rotationAxis) {
   var B = Builder;
 
+  console.log("Building cube view with rotation axis " + rotationAxis);
+
   function makeSticker(color, label, modelLabel) {
     if (color === undefined) {
       return undefined;
@@ -473,6 +475,7 @@ function makeCubeView(cube,rotationAxis) {
     function setTransform() {
       layerDiv.style.webkitTransform = "rotate" + rotationAxis + "(" + rot + "deg)";
     }
+
     return {
       getLayerDiv: function() {
         return layerDiv;
@@ -480,15 +483,15 @@ function makeCubeView(cube,rotationAxis) {
       getRotationAxis: function() {
         return rotationAxis;
       },
-      setTransitionEndCallback: function(fn) {
-        transitionEndCallback = fn;
-      },
-      rotateClockwise: function() {
+      rotateClockwise: function(callback) {
+        console.log("layer clockwise rotation");
         rot = rot + clockwiseRotation;
+        transitionEndCallback = callback;
         setTransform();
       },
-      rotateCounterClockwise: function() {
+      rotateCounterClockwise: function(callback) {
         rot = rot - clockwiseRotation;
+        transitionEndCallback = callback;
         setTransform();
       }
     };
@@ -521,9 +524,27 @@ function makeCubeView(cube,rotationAxis) {
     }
   },false);
 
+
+  function rotate(layerIndex,direction,callback) {
+    console.log("Rotating layer %d in %s direction", layerIndex, direction);
+    if (direction === "cw") {
+      layers[layerIndex].rotateClockwise(callback);
+    } else {
+      layers[layerIndex].rotateCounterClockwise(callback);
+    }
+  }
+
   var cubeDiv = B.DIV({class: "cube"}, layers.map(function (l) { return l.getLayerDiv();}));
 
-  return cubeDiv;
+  return {
+    getCubeDiv: function () { return cubeDiv; },
+    rotate: rotate,
+    rotateAfterDelay: function(layerIndex,direction,callback) {
+      window.setTimeout(function () {
+        rotate(layerIndex,direction,callback);
+      },0);
+    }
+  };
 }
 
 function makeScene() {
@@ -564,14 +585,14 @@ function makeScene() {
     };
   }());
 
-  rotator.setCubeView(makeCubeView(Cube,'X'));
+  var cubeView = makeCubeView(Cube,'X');
+  rotator.setCubeView(cubeView.getCubeDiv());
 
   var camera = Builder.DIV({class: "camera"},[rotator.getRotatorDiv()]);
   var scene = Builder.DIV({class: "scene"},[camera]);
   var container = Builder.DIV({class: "container"},[scene]);
 
   document.body.appendChild(container);
-
 
   var moves = {
     'u' : "U",
@@ -585,35 +606,60 @@ function makeScene() {
     'r' : "R",
     'R' : "R'",
     'l' : "L",
-    'L' : "L'",
+    'L' : "L'"
   };
 
+  var layerAnimations = {
+    "U"   : ["Y", 0, "cw"],
+    "U'"  : ["Y", 0, "ccw"],
+    "D"   : ["Y", 2, "cw"],
+    "D'"  : ["Y", 2, "ccw"],
+    "B"   : ["Z", 0, "cw"],
+    "B'"  : ["Z", 0, "ccw"],
+    "F"   : ["Z", 2, "cw"],
+    "F'"  : ["Z", 2, "ccw"],
+    "R"   : ["X", 2, "cw"],
+    "R'"  : ["X", 2, "ccw"],
+    "L"   : ["X", 0, "cw"],
+    "L'"  : ["X", 0, "ccw"]
+  };
+
+  var inRotationAnimation = false;
   document.body.addEventListener('keypress', function (evt) {
     var key = evt.keyCode || evt.which,
         keychar = String.fromCharCode(key),
         move = moves[keychar];
+
+    console.log("keypress: " + keychar);
+
     if (move !== undefined) {
+      console.log("inRotationAnimation = " + inRotationAnimation);
+      if (inRotationAnimation == true) {
+        console.log("already rotating");
+        // TODO: queue move to finish after current move ends
+        return;
+      }
+
       console.log("Performing move: " + move);
-      Cube.move(move);
-      Cube.printCube();
-      Validator.validate(Cube);
-      rotator.setCubeView(makeCubeView(Cube,'X'));
-    }
 
-    if (keychar == 'x') {
-      rotator.setCubeView(makeCubeView(Cube,'X'));
-    }
+      var animationInfo = layerAnimations[move];
+      console.log("Layer animation = " + animationInfo);
 
-    if (keychar == 'y') {
-      rotator.setCubeView(makeCubeView(Cube,'Y'));
-    }
+      inRotationAnimation = true;
 
-    if (keychar == 'z') {
-      rotator.setCubeView(makeCubeView(Cube,'Z'));
+      cubeView = makeCubeView(Cube,animationInfo[0]);
+      rotator.setCubeView(cubeView.getCubeDiv());
+      cubeView.rotateAfterDelay(animationInfo[1],animationInfo[2],function() {
+        console.log("performing move.");
+        Cube.move(move);
+        Cube.printCube();
+        Validator.validate(Cube);
+        cubeView = makeCubeView(Cube,'X');
+        rotator.setCubeView(cubeView.getCubeDiv());
+        inRotationAnimation = false;
+      });
     }
-
   },false);
-
 
   return [container, camera, scene];
 }

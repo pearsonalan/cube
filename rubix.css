@@ -101,11 +101,11 @@ html {
 
 .camera {
   -webkit-transform: translateX(1400px) translateY(1400px) translateZ(-4000px);
-  -webkit-transition: -webkit-transform 0.7s;
+  -webkit-transition: -webkit-transform 0.8s;
 }
 
 .cube .layer {
-  -webkit-transition: -webkit-transform 0.8s;
+  -webkit-transition: -webkit-transform 0.5s;
 }
 
 .cube .face {
@@ -151,25 +151,26 @@ html {
 }
 
 .cube .face .sticker .color-label {
-  font-size: 20px;
+  display: none;
+  font-size: 12px;
   font-style: italic;
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  right: 3px;
 }
 
 .cube .face .sticker .position-label {
-  font-size: 20px;
+  font-size: 18px;
   font-style: italic;
   position: absolute;
   top: 0px;
-  left: 0px;
+  left: 3px;
 }
 
 .cube .face .sticker .model-label {
-  line-height: 82px;
+  line-height: 92px;
   text-align: center;
-  font-size: 42px;
+  font-size: 52px;
   font-weight: bold;
 }
 

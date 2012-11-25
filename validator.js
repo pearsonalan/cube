@@ -88,14 +88,11 @@ var Validator = (function() {
   }
 
   function validateSubCube(cube,validValues,subcube) {
-    console.log("Validating subcube at %s", subcube);
     var labels = getSubCubeLabels(cube,subcube);
-    console.log("  labels at %s = %s", subcube, labels);
     if (validValues[labels] === true) {
-      console.log("    valid");
       return true;
     } else {
-      console.log("    INVALID!");
+      console.log("Discovered invalid piece: colors " + labels + " at " + subcube);
       alert("Discovered invalid piece: colors " + labels + " at " + subcube);
       return false;
     }
