@@ -102,6 +102,17 @@ function debug(str) {
   output('debug',str);
 }
 
+var FaceNames = {
+  U: 'UP',
+  D: 'DOWN',
+  L: 'LEFT',
+  R: 'RIGHT',
+  F: 'FRONT',
+  B: 'BACK'
+};
+
+var Faces = Object.keys(FaceNames);
+
 var Cube = (function() {
   var cube;
 
@@ -199,17 +210,6 @@ var Cube = (function() {
       B: Face("O")
     };
   }
-
-  var faceNames = {
-    U: 'UP',
-    D: 'DOWN',
-    L: 'LEFT',
-    R: 'RIGHT',
-    F: 'FRONT',
-    B: 'BACK'
-  };
-
-  var faces = Object.keys(faceNames);
 
   cube = initCube();
 
@@ -333,8 +333,8 @@ var Cube = (function() {
       return getFace(orientation).labelAt(x,y);
     },
     printCube: function() {
-      faces.forEach(function (face) {
-        output('h4',faceNames[face]);
+      Faces.forEach(function (face) {
+        output('h4',FaceNames[face]);
         var div = cube[face].dump();
         $ID('output').appendChild(div);
       });
@@ -577,29 +577,15 @@ function makeScene() {
     },false);
 
     function addFaceIndicators() {
-      var frontIndicator = Builder.DIV({class: "indicator front"}, "F");
-      var frontIndicatorContainer = Builder.DIV({class: "indicator-container front"}, [frontIndicator]);
-      rotatorDiv.appendChild(frontIndicatorContainer);
+      function makeFaceIndicator(direction,text) {
+        var indicator = Builder.DIV({class: "indicator " + direction}, text);
+        var indicatorContainer = Builder.DIV({class: "indicator-container " + direction}, [indicator]);
+        rotatorDiv.appendChild(indicatorContainer);
+      }
 
-      var upIndicator = Builder.DIV({class: "indicator up"}, "U");
-      var upIndicatorContainer = Builder.DIV({class: "indicator-container up"}, [upIndicator]);
-      rotatorDiv.appendChild(upIndicatorContainer);
-
-      var leftIndicator = Builder.DIV({class: "indicator left"}, "L");
-      var leftIndicatorContainer = Builder.DIV({class: "indicator-container left"}, [leftIndicator]);
-      rotatorDiv.appendChild(leftIndicatorContainer);
-
-      var rightIndicator = Builder.DIV({class: "indicator right"}, "R");
-      var rightIndicatorContainer = Builder.DIV({class: "indicator-container right"}, [rightIndicator]);
-      rotatorDiv.appendChild(rightIndicatorContainer);
-
-      var backIndicator = Builder.DIV({class: "indicator back"}, "B");
-      var backIndicatorContainer = Builder.DIV({class: "indicator-container back"}, [backIndicator]);
-      rotatorDiv.appendChild(backIndicatorContainer);
-
-      var downIndicator = Builder.DIV({class: "indicator down"}, "D");
-      var downIndicatorContainer = Builder.DIV({class: "indicator-container down"}, [downIndicator]);
-      rotatorDiv.appendChild(downIndicatorContainer);
+      Faces.forEach(function (face) {
+        makeFaceIndicator(FaceNames[face].toLowerCase(), face);
+      });
     }
 
     return {
