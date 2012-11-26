@@ -3,6 +3,27 @@ html {
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 
+#input {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 8px;
+  padding: 6px;
+  background-color: white;
+}
+
+#input #move-input {
+  width: 200px;
+  height: 20px;
+}
+
+#input button {
+  width: 80px;
+  height: 24px;
+  padding: 0 4px;
+}
+
 #output {
   display: none;
   position: absolute;

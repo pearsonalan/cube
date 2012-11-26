@@ -633,43 +633,71 @@ function makeScene() {
     "L'"  : ["X", 0, "ccw"]
   };
 
+
   var inRotationAnimation = false;
-  document.body.addEventListener('keypress', function (evt) {
+  var moveQueue = [];
+
+  function performMove(move) {
+    var animationInfo = layerAnimations[move];
+
+    inRotationAnimation = true;
+
+    cubeView = makeCubeView(Cube,animationInfo[0]);
+    rotator.setCubeView(cubeView.getCubeDiv());
+
+    cubeView.rotateAfterDelay(animationInfo[1],animationInfo[2],function() {
+      Cube.move(move);
+      Cube.printCube();
+      Validator.validate(Cube);
+      cubeView = makeCubeView(Cube,'X');
+      rotator.setCubeView(cubeView.getCubeDiv());
+      inRotationAnimation = false;
+
+      if (moveQueue.length > 0) {
+        performMove(moveQueue.shift());
+      }
+    });
+  }
+
+  function keypressHandler(evt) {
     var key = evt.keyCode || evt.which,
         keychar = String.fromCharCode(key),
         move = moves[keychar];
 
     if (move !== undefined) {
       if (inRotationAnimation == true) {
-        // TODO: queue move to finish after current move ends
+        moveQueue.push(move);        
         return;
       }
 
-      var animationInfo = layerAnimations[move];
-
-      inRotationAnimation = true;
-
-      cubeView = makeCubeView(Cube,animationInfo[0]);
-      rotator.setCubeView(cubeView.getCubeDiv());
-      cubeView.rotateAfterDelay(animationInfo[1],animationInfo[2],function() {
-        Cube.move(move);
-        Cube.printCube();
-        Validator.validate(Cube);
-        cubeView = makeCubeView(Cube,'X');
-        rotator.setCubeView(cubeView.getCubeDiv());
-        inRotationAnimation = false;
-      });
+      performMove(move);
     }
-  },false);
+  }
 
-  return [container, camera, scene];
+  document.body.addEventListener('keypress', keypressHandler,false);
+
+  function queueMoveSequence(moveSequence) {
+    var moves = moveSequence.split(' ');
+    moves.forEach(function (move) {
+      moveQueue.push(move);
+    });
+    if (!inRotationAnimation) {
+      performMove(moveQueue.shift());
+    }
+  }
+
+  return {
+    getContainer: function() { return container; },
+    getCamera: function() { return camera; },
+    run: queueMoveSequence
+  };
 }
 
 window.addEventListener("DOMContentLoaded", function() {
   Validator.validate(Cube);
-  var elements = makeScene();
+  window.scene = makeScene();
   window.setTimeout(function () {
-    elements[0].style.opacity = "1";
-    elements[1].style.webkitTransform = "translateX(400px) translateY(400px) translateZ(-400px)";
+    scene.getContainer().style.opacity = "1";
+    scene.getCamera().style.webkitTransform = "translateX(400px) translateY(400px) translateZ(-400px)";
   },0);
 }, false);
