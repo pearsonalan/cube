@@ -348,8 +348,6 @@ var Cube = (function() {
 function makeCubeView(cube,rotationAxis) {
   var B = Builder;
 
-  console.log("Building cube view with rotation axis " + rotationAxis);
-
   function makeSticker(color, label, modelLabel) {
     if (color === undefined) {
       return undefined;
@@ -465,7 +463,6 @@ function makeCubeView(cube,rotationAxis) {
     }
 
     layerDiv.addEventListener('webkitTransitionEnd', function (evt) {
-      console.log("transition ended");
       if (transitionEndCallback !== undefined) {
         transitionEndCallback();
         transitionEndCallback = undefined;
@@ -484,7 +481,6 @@ function makeCubeView(cube,rotationAxis) {
         return rotationAxis;
       },
       rotateClockwise: function(callback) {
-        console.log("layer clockwise rotation");
         rot = rot + clockwiseRotation;
         transitionEndCallback = callback;
         setTransform();
@@ -526,7 +522,6 @@ function makeCubeView(cube,rotationAxis) {
 
 
   function rotate(layerIndex,direction,callback) {
-    console.log("Rotating layer %d in %s direction", layerIndex, direction);
     if (direction === "cw") {
       layers[layerIndex].rotateClockwise(callback);
     } else {
@@ -557,17 +552,14 @@ function makeScene() {
     addFaceIndicators();
 
     document.body.addEventListener('mousedown', function (evt) {
-      // console.log("mousedown");
       rotating = true;
     },false);
 
     document.body.addEventListener('mouseup', function (evt) {
-      // console.log("mouseup");
       rotating = false;
     },false);
 
     document.body.addEventListener('mousemove', function (evt) {
-      // console.log("mousemove: ", evt);
       if (rotating && (evt.webkitMovementY !== 0 || evt.webkitMovementX !== 0)) {
         // mouse movement in the x-axis causes cube rotation around the y-axis and vice-versa
         xrot = xrot - evt.webkitMovementY/2;
@@ -647,27 +639,19 @@ function makeScene() {
         keychar = String.fromCharCode(key),
         move = moves[keychar];
 
-    console.log("keypress: " + keychar);
-
     if (move !== undefined) {
-      console.log("inRotationAnimation = " + inRotationAnimation);
       if (inRotationAnimation == true) {
-        console.log("already rotating");
         // TODO: queue move to finish after current move ends
         return;
       }
 
-      console.log("Performing move: " + move);
-
       var animationInfo = layerAnimations[move];
-      console.log("Layer animation = " + animationInfo);
 
       inRotationAnimation = true;
 
       cubeView = makeCubeView(Cube,animationInfo[0]);
       rotator.setCubeView(cubeView.getCubeDiv());
       cubeView.rotateAfterDelay(animationInfo[1],animationInfo[2],function() {
-        console.log("performing move.");
         Cube.move(move);
         Cube.printCube();
         Validator.validate(Cube);
