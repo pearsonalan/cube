@@ -551,8 +551,10 @@ function makeScene() {
 
   var rotator = (function () {
     var xrot = 0, yrot = 0, rotating = false;
+    var cubeView = undefined;
 
     var rotatorDiv = Builder.DIV({class: "rotator"},[]);
+    addFaceIndicators();
 
     document.body.addEventListener('mousedown', function (evt) {
       // console.log("mousedown");
@@ -574,9 +576,38 @@ function makeScene() {
       }
     },false);
 
+    function addFaceIndicators() {
+      var frontIndicator = Builder.DIV({class: "indicator front"}, "F");
+      var frontIndicatorContainer = Builder.DIV({class: "indicator-container front"}, [frontIndicator]);
+      rotatorDiv.appendChild(frontIndicatorContainer);
+
+      var upIndicator = Builder.DIV({class: "indicator up"}, "U");
+      var upIndicatorContainer = Builder.DIV({class: "indicator-container up"}, [upIndicator]);
+      rotatorDiv.appendChild(upIndicatorContainer);
+
+      var leftIndicator = Builder.DIV({class: "indicator left"}, "L");
+      var leftIndicatorContainer = Builder.DIV({class: "indicator-container left"}, [leftIndicator]);
+      rotatorDiv.appendChild(leftIndicatorContainer);
+
+      var rightIndicator = Builder.DIV({class: "indicator right"}, "R");
+      var rightIndicatorContainer = Builder.DIV({class: "indicator-container right"}, [rightIndicator]);
+      rotatorDiv.appendChild(rightIndicatorContainer);
+
+      var backIndicator = Builder.DIV({class: "indicator back"}, "B");
+      var backIndicatorContainer = Builder.DIV({class: "indicator-container back"}, [backIndicator]);
+      rotatorDiv.appendChild(backIndicatorContainer);
+
+      var downIndicator = Builder.DIV({class: "indicator down"}, "D");
+      var downIndicatorContainer = Builder.DIV({class: "indicator-container down"}, [downIndicator]);
+      rotatorDiv.appendChild(downIndicatorContainer);
+    }
+
     return {
-      setCubeView: function (cubeView) {
-        removeChildren(rotatorDiv);
+      setCubeView: function (newCubeView) {
+        if (cubeView !== undefined) {
+          rotatorDiv.removeChild(cubeView);
+        }
+        cubeView = newCubeView
         rotatorDiv.appendChild(cubeView);
       },
       getRotatorDiv: function () {
