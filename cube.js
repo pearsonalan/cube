@@ -105,6 +105,7 @@ var Cube = (function() {
   function debug(str) {
     document.write("<div class='debug'>" + str + "</div>\r\n");
   }
+  
   function rotate(orientation, direction) {
 
     function cw(n,m) {

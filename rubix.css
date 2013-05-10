@@ -4,7 +4,6 @@ html {
 }
 
 #input {
-  display: none;
   position: absolute;
   top: 10px;
   right: 10px;
@@ -58,6 +57,7 @@ html {
   margin: 1px;
   border: 1px solid #666;
   padding: 4px;
+  -webkit-backface-visibility: hidden;
 }
 
 #output .sticker.Y {
@@ -134,6 +134,7 @@ html {
   width: 100px;
   height: 100px;
   background-color: black;
+  /* -webkit-backface-visibility: hidden;*/
 }
 
 .cube .face.up-face {
@@ -170,6 +171,7 @@ html {
   font-size: 26px;
   line-height: 26px;
   padding: 4px;
+  -webkit-transform: translateZ(4px);
 }
 
 .cube .face .sticker .color-label {
@@ -231,27 +233,27 @@ html {
 }
 
 .indicator-container.front {
-  -webkit-transform: translateX(-150px) translateY(-150px) translateZ(151px);
+  -webkit-transform: translateX(-150px) translateY(-150px) translateZ(155px);
 }
 
 .indicator-container.up {
-  -webkit-transform: translateX(-150px) translateY(-150px) rotateX(90deg) translateZ(151px);
+  -webkit-transform: translateX(-150px) translateY(-150px) rotateX(90deg) translateZ(155px);
 }
 
 .indicator-container.right {
-  -webkit-transform: translateX(-150px) translateY(-150px) rotateY(90deg) translateZ(151px);
+  -webkit-transform: translateX(-150px) translateY(-150px) rotateY(90deg) translateZ(155px);
 }
 
 .indicator-container.left {
-  -webkit-transform:  translateX(-150px) translateY(-150px) rotateY(270deg) translateZ(151px);
+  -webkit-transform:  translateX(-150px) translateY(-150px) rotateY(270deg) translateZ(155px);
 }
 
 .indicator-container.back {
-  -webkit-transform:  translateX(-150px) translateY(-150px) translateZ(-151px) rotateY(180deg);
+  -webkit-transform:  translateX(-150px) translateY(-150px) translateZ(-155px) rotateY(180deg);
 }
 
 .indicator-container.down {
-  -webkit-transform: translateX(-150px) translateY(-150px) rotateX(-90deg) translateZ(151px);
+  -webkit-transform: translateX(-150px) translateY(-150px) rotateX(-90deg) translateZ(155px);
 }
 
 .indicator {

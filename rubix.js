@@ -25,7 +25,7 @@ function $ID(x) {
 }
 
 function $CLASS(x) {
-  return document.getElementsByClass(x);
+  return document.getElementsByClassName(x);
 }
 
 function removeChildren(el) {
@@ -362,6 +362,9 @@ function makeCubeView(cube,rotationAxis) {
 
   function makeFace(color, directionStyle, label, modelLabel) {
     var sticker = undefined;
+    if (color === undefined) {
+      return undefined;
+    }
     if (color !== undefined) {
       sticker = [ makeSticker(color, label, modelLabel) ];
     }
@@ -375,7 +378,9 @@ function makeCubeView(cube,rotationAxis) {
         l = makeFace(colors[3],'left-face', labels[3], modelLabels[3]),
         b = makeFace(colors[4],'back-face', labels[4], modelLabels[4]),
         f = makeFace(colors[5],'front-face', labels[5], modelLabels[5]);
-    var c =  B.DIV({class: "subcube"}, [u,d,r,l,b,f]);
+    var faces = [u,d,r,l,b,f];
+    ff = faces.filter(function (face) { return face !== undefined; });
+    var c =  B.DIV({class: "subcube"}, ff);
     c.style.webkitTransform = 
       "translateX(" + x + "px)" +
       "translateY(" + y + "px)" +
@@ -518,6 +523,7 @@ function makeCubeView(cube,rotationAxis) {
     if (keychar == 'H') {
       layers[2].rotateCounterClockwise();
     }
+
   },false);
 
 
@@ -545,13 +551,18 @@ function makeCubeView(cube,rotationAxis) {
 function makeScene() {
 
   var rotator = (function () {
-    var xrot = 0, yrot = 0, rotating = false;
-    var cubeView = undefined;
+    var xrot = 0, yrot = 0, rotating = false,
+        currentTransformString, currentTransform,
+        cubeView = undefined;
 
     var rotatorDiv = Builder.DIV({class: "rotator"},[]);
     addFaceIndicators();
 
     document.body.addEventListener('mousedown', function (evt) {
+      currentTransform = new WebKitCSSMatrix(window.getComputedStyle(rotatorDiv).webkitTransform);
+      currentTransformString = currentTransform.toString();
+      xrot = 0;
+      yrot = 0;
       rotating = true;
     },false);
 
@@ -564,7 +575,7 @@ function makeScene() {
         // mouse movement in the x-axis causes cube rotation around the y-axis and vice-versa
         xrot = xrot - evt.webkitMovementY/2;
         yrot = yrot + evt.webkitMovementX/2;
-        rotatorDiv.style.webkitTransform = "rotateY(" + yrot + "deg) rotateX(" + xrot + "deg)";
+        rotatorDiv.style.webkitTransform = "rotateY(" + yrot + "deg) rotateX(" + xrot + "deg) " + currentTransformString;
       }
     },false);
 
@@ -663,6 +674,8 @@ function makeScene() {
     var key = evt.keyCode || evt.which,
         keychar = String.fromCharCode(key),
         move = moves[keychar];
+
+    console.log("active element = ", document.activeElement);
 
     if (move !== undefined) {
       if (inRotationAnimation == true) {
