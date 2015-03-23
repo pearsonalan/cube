@@ -706,6 +706,29 @@ function makeScene() {
   };
 }
 
+var Help = (function() {
+  var shown = false,
+      helpDiv = undefined;
+
+  function toggleHelp(evt) {
+    shown = !shown;
+    if (shown) {
+      helpDiv.setAttribute("class", "show-help");
+    } else {
+      helpDiv.setAttribute("class", "hide-help");
+    }
+    evt.preventDefault();
+  }
+
+  function initializeHelp() {
+    helpDiv = $ID("help");
+    $ID("help-button").addEventListener("click", toggleHelp, false);
+  }
+  return {
+    init: initializeHelp
+  };
+})();
+
 window.addEventListener("DOMContentLoaded", function() {
   Validator.validate(Cube);
   window.scene = makeScene();
@@ -713,4 +736,5 @@ window.addEventListener("DOMContentLoaded", function() {
     scene.getContainer().style.opacity = "1";
     scene.getCamera().style.webkitTransform = "translateX(400px) translateY(400px) translateZ(-400px)";
   },0);
+  Help.init();
 }, false);

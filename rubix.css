@@ -3,6 +3,10 @@ html {
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 
+strong {
+  font-weight: bold;
+}
+
 #input {
   position: absolute;
   top: 10px;
@@ -22,6 +26,66 @@ html {
   height: 24px;
   padding: 0 4px;
 }
+
+#help {
+  position: absolute;
+  right: 12px;
+  width: 240px;
+}
+
+#help #help-button {
+  position: absolute;
+  right: 0px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 12px;
+  background-color: white;
+  color: blue;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+#help.show-help #help-button span.reveal {
+  display: none;
+}
+
+#help.hide-help #help-button span.hide {
+  display: none;
+}
+
+#help .help-container {
+  position: absolute;
+  right: 0px;
+  overflow: hidden;
+  background-color: white;
+  color: black;
+  border-radius: 12px;
+  -webkit-transition: width .2s, height .2s;
+}
+
+#help.hide-help .help-container {
+  width: 24px;
+  height: 24px;
+}
+
+#help.show-help .help-container {
+  width: 240px;
+  height: 300px;
+}
+
+#help .help-text {
+  padding: 28px 10px 10px 10px;
+  width: 220px;
+}
+
+#help .help-text p {
+  padding-bottom: 6px;
+}
+
 
 #output {
   display: none;
@@ -274,3 +338,14 @@ html {
   display: block;
 }
 
+.attribution {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  font-size: 14px;
+}
+
+.attribution a:link,
+.attribution a:visited {
+  color: #AAA;
+}

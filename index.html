@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2015 Alan Pearson. All rights reserved. -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,11 +7,34 @@
   <link rel="stylesheet" href="rubix.css" />
 </head>
 <body>
-  <div id="input">
-    <input type="text" id="move-input" placeholder="type moves">
-    <button id="run-moves">Run</button>
+  <div id="help" class="hide-help">
+    <div class="help-container">
+      <div class="help-text">
+        <p>Press
+          <strong>F</strong>,
+          <strong>B</strong>,
+          <strong>L</strong>,
+          <strong>R</strong>,
+          <strong>U</strong>,
+          <strong>D</strong>
+          to rotate the Front, Back, Left, Right, Up and Down faces respectively.
+          Hold <strong>SHIFT</strong> down to rotate counter-clockwise.
+        </p>
+        <p>
+          Click and drag the mouse to rotate the cube.
+        </p>
+        <p>
+          Hover the mouse over the face to reveal the face label.
+        </p>
+        <p>
+          Have fun!
+        </p>
+      </div>
+    </div>
+    <div id="help-button"><span class="reveal">?</span><span class="hide">X</span></div>
   </div>
   <div id="output"></div>
+  <div class="attribution"><a href="http://github.com/pearsonalan/cube">http://github.com/pearsonalan/cube</a></div>
   <script src="rubix.js"></script>
   <script src="validator.js"></script>
 </body>
