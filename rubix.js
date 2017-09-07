@@ -571,10 +571,10 @@ function makeScene() {
     },false);
 
     document.body.addEventListener('mousemove', function (evt) {
-      if (rotating && (evt.webkitMovementY !== 0 || evt.webkitMovementX !== 0)) {
+      if (rotating && (evt.movementY !== 0 || evt.movementX !== 0)) {
         // mouse movement in the x-axis causes cube rotation around the y-axis and vice-versa
-        xrot = xrot - evt.webkitMovementY/2;
-        yrot = yrot + evt.webkitMovementX/2;
+        xrot = xrot - evt.movementY/2;
+        yrot = yrot + evt.movementX/2;
         rotatorDiv.style.webkitTransform = "rotateY(" + yrot + "deg) rotateX(" + xrot + "deg) " + currentTransformString;
       }
     },false);
